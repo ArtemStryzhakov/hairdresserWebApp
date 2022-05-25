@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+</head>
+<body>
+    <h1><%= title %></h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Hair naming</th>
+            <% if(session){%><th>Action</th> <% }%>
+            </tr>
+        </thead>
+        <tbody>
+            <% for(let i=0; i < bookings.length; i++) { %>
+                <tr>
+                  <td><%= bookings[i].name %></td>
+                  <td><input readonly type="date" value="<%= bookings[i]["date"].toISOString().split('T')[0] %>"></td>
+                  <td><input readonly type="text" id="time" name="timeField" value="<%= bookings[i].time%>"></td>
+                  <td><%= bookings[i]["stylename"] %></td>
+                  <% if(session){%><td>
+                        <input type="hidden" value="<%= bookings[i]["id"] %>">
+                        <a href="/delete/<%= bookings[i]["id"] %>"><input type="button" value="X"></a>
+                        <a href="/update/<%= bookings[i]["id"] %>"><input type="button" value="Update"></a>
+                  </td><% }%>
+                </tr>
+             <% } %>
+        </tbody>
+    </table><br>
+    <% if(session){%>
+    <form action="/" method="post">
+        <label for="name">Enter name: <br></label>
+        <input required id="name" type="text" name="nameField" placeholder="Your name." ><br>
+
+        <label for="date">Enter date: </label><br>
+        <input required id="date" type="date" name="dateField"><br>
+        
+        <label for="time">Enter time: </label><br>
+        <input required type="time" id="time" min="10:00" max="20:00" name="timeField"><br>
+
+        <label for="hairStyle">Choose a hairstyle: </label><br>
+        <select required name="hairStyle" id="hairstyle">
+            <% for( let i = 0; i < styles.length; i++ ) { %>
+                <option value="<%= styles[i].id %>"><%= styles[i]["stylename"] %></option>
+            <% } %>
+        </select><br>
+        <input style="margin-top: 10px;" type="submit" value="OK">
+    </form>
+    <form action="/addh" method="post">
+        <label for="stylename">Style: <br></label>
+        <input required id="stylename" type="text" name="stylename" placeholder="Hair style name" ><br>
+        <label for="picURL">Picture: <br></label>
+        <input required id="picURL" type="text" name="picURL" placeholder="Picture Url" ><br>
+        <input type="submit" value="Meh">
+    </form>
+        <h2>Welcome, <%= username%></h2>
+        <a href="/logout">Log out</a>
+    <% }else{%>
+        <a href="/signup">Register</a><br>
+        <p>Have an account? </p>
+        <a href="/login">Login</a>
+    <%} %>
+    <script>
+        let tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('date').min = tomorrow.toISOString().split("T")[0];
+    </script>
+</body>
+</html>
